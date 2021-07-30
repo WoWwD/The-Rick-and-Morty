@@ -34,15 +34,14 @@ class PageInfoAboutCharacter extends StatelessWidget {
                   Links.unencodedPathCharacter + "/${character.id.toString()}"),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  return Container(
-                    padding: EdgeInsets.all(10),
-                    alignment: Alignment.center,
-                    child: Column(
-                      children: <Widget>[
-                        Information().getImageAndShortInfo(snapshot),
-                        Information().getInfo(snapshot)
-                      ],
-                    ),
+                  InfoAboutCharacterForListview().getValue(snapshot);
+                  return Column(
+                    children: <Widget>[
+                      Expanded(
+                        child: Information().getImageAndShortInfo(snapshot),
+                      ),
+                      Expanded(child: Information().getInfo(snapshot)),
+                    ],
                   );
                 } else if (snapshot.hasError) {
                   return Text("Error");
@@ -59,117 +58,116 @@ class PageInfoAboutCharacter extends StatelessWidget {
 
 class Information {
   Widget getImageAndShortInfo(AsyncSnapshot snapshot) {
-    return Expanded(
-        flex: 2,
-        child: Container(
-            alignment: Alignment.center,
+    return Row(
+      children: <Widget>[
+        Expanded(
+            flex: 5,
             child: Container(
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    flex: 2,
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.network(
-                          "${snapshot.data!.image}",
-                          fit: BoxFit.cover,
-                        )),
-                  ),
-                  Expanded(
-                      child: Container(
-                          margin: EdgeInsets.only(left: 15, top: 8, bottom: 8),
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[700],
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Container(
-                              child: Expanded(
-                            child: Column(
-                              children: <Widget>[
-                                getTitleAndSubtitle(snapshot, "Live status:",
-                                    "${snapshot.data!.status}"),
-                                getTitleAndSubtitle(snapshot, "Species:",
-                                    "${snapshot.data!.species}"),
-                                getTitleAndSubtitle(snapshot, "Gender:",
-                                    "${snapshot.data!.gender}"),
-                              ],
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                            ),
-                          ))))
-                ],
-              ),
-            )));
+              margin: EdgeInsets.all(10),
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.network(
+                    "${snapshot.data!.image}",
+                    fit: BoxFit.fill,
+                  )),
+            )),
+        Expanded(
+            flex: 2,
+            child: getContainer(Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                getTitle(snapshot, "Live status:"),
+                getSubTitle(snapshot, "${snapshot.data!.status}"),
+                getTitle(snapshot, "Species:"),
+                getSubTitle(snapshot, "${snapshot.data!.species}"),
+                getTitle(snapshot, "Gender:"),
+                getSubTitle(snapshot, "${snapshot.data!.gender}"),
+              ],
+            ))),
+      ],
+    );
+  }
+
+  Widget getContainer(Widget child) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey[700],
+        borderRadius: BorderRadius.all(Radius.circular(15)),
+      ),
+      padding: EdgeInsets.all(10),
+      margin: EdgeInsets.all(10),
+      child: child,
+    );
   }
 
   Widget getInfo(AsyncSnapshot snapshot) {
-    return Expanded(
-        flex: 3,
-        child: Container(
-            margin: EdgeInsets.only(top: 10),
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.grey[700],
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(left: 15, top: 15, right: 15),
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "${snapshot.data!.name}",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 30,
-                          fontFamily: "GFowunDodum"),
-                    ),
-                  ),
-                  Divider(
-                    color: Colors.white,
-                    thickness: 2,
-                    endIndent: 0,
-                    indent: 0,
-                  ),
-                  SizedBox(height: 10),
-                  getTitleAndSubtitle(snapshot, "Last known location",
-                      "${snapshot.data!.location.name}"),
-                  getTitleAndSubtitle(snapshot, "First seen in",
-                      "${snapshot.data!.origin.name}"),
-                  getTitleAndSubtitle(snapshot, "Episodes featuring",
-                      "${snapshot.data!.episode.length}"),
-                  getTitleAndSubtitle(
-                      snapshot, "Created", "${snapshot.data!.created}"),
-                ],
-              ),
-            )));
+    return getContainer(Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          "${InfoAboutCharacterForListview.name}",
+          style: TextStyle(
+              color: Colors.white, fontSize: 28, fontFamily: "GFowunDodum"),
+        ),
+        Divider(
+          color: Colors.white,
+          thickness: 2,
+          endIndent: 0,
+          indent: 0,
+        ),
+        Expanded(
+            child: ListView(
+          children: [
+            getTitle(snapshot, "Last known location:"),
+            getSubTitle(
+                snapshot, "${InfoAboutCharacterForListview.lastLocation}"),
+            SizedBox(height: 25),
+            getTitle(snapshot, "First seen in:"),
+            getSubTitle(
+                snapshot, "${InfoAboutCharacterForListview.firstSeenIn}"),
+            SizedBox(height: 25),
+            getTitle(snapshot, "Episodes featuring:"),
+            getSubTitle(
+                snapshot, "${InfoAboutCharacterForListview.episodesFeat}"),
+            SizedBox(height: 25),
+            getTitle(snapshot, "Created:"),
+            getSubTitle(snapshot, "${InfoAboutCharacterForListview.created}"),
+          ],
+        ))
+      ],
+    ));
   }
 
-  Widget getTitleAndSubtitle(
-      AsyncSnapshot snapshot, String title, String subTitle) {
-    return Container(
-      child: Expanded(
-          child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            title,
-            style: TextStyle(
-                color: Colors.grey[350],
-                fontSize: 14,
-                fontFamily: "GowunDodum"),
-          ),
-          Expanded(
-            child: Text(
-              subTitle,
-              style: TextStyle(
-                  color: Colors.white, fontSize: 16, fontFamily: "GFowunDodum"),
-            ),
-          )
-        ],
-      )),
+  Widget getTitle(AsyncSnapshot snapshot, String title) {
+    return Text(
+      title,
+      style: TextStyle(
+          color: Colors.grey[350], fontSize: 14, fontFamily: "GowunDodum"),
     );
+  }
+
+  Widget getSubTitle(AsyncSnapshot snapshot, String subTitle) {
+    return Text(
+      subTitle,
+      style: TextStyle(
+          color: Colors.white, fontSize: 16, fontFamily: "GFowunDodum"),
+    );
+  }
+}
+
+class InfoAboutCharacterForListview {
+  static String name = "";
+  static String lastLocation = "";
+  static String firstSeenIn = "";
+  static int episodesFeat = 0;
+  static String created = "";
+
+  void getValue(AsyncSnapshot snapshot) {
+    InfoAboutCharacterForListview.name = snapshot.data!.name;
+    InfoAboutCharacterForListview.lastLocation = snapshot.data!.location.name;
+    InfoAboutCharacterForListview.firstSeenIn = snapshot.data!.origin.name;
+    InfoAboutCharacterForListview.episodesFeat = snapshot.data!.episode.length;
+    InfoAboutCharacterForListview.created = snapshot.data!.created;
   }
 }
