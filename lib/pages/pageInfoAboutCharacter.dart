@@ -38,9 +38,10 @@ class PageInfoAboutCharacter extends StatelessWidget {
                   return Column(
                     children: <Widget>[
                       Expanded(
-                        child: Information().getImageAndShortInfo(snapshot),
+                        flex: 3,
+                        child: Information().getImage(snapshot),
                       ),
-                      Expanded(child: Information().getInfo(snapshot)),
+                      Expanded(flex: 4, child: Information().getInfo(snapshot)),
                     ],
                   );
                 } else if (snapshot.hasError) {
@@ -57,42 +58,22 @@ class PageInfoAboutCharacter extends StatelessWidget {
 }
 
 class Information {
-  Widget getImageAndShortInfo(AsyncSnapshot snapshot) {
-    return Row(
-      children: <Widget>[
-        Expanded(
-            flex: 5,
-            child: Container(
-              margin: EdgeInsets.all(10),
-              child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                    "${snapshot.data!.image}",
-                    fit: BoxFit.fill,
-                  )),
-            )),
-        Expanded(
-            flex: 2,
-            child: getContainer(Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                getTitle(snapshot, "Live status:"),
-                getSubTitle(snapshot, "${snapshot.data!.status}"),
-                getTitle(snapshot, "Species:"),
-                getSubTitle(snapshot, "${snapshot.data!.species}"),
-                getTitle(snapshot, "Gender:"),
-                getSubTitle(snapshot, "${snapshot.data!.gender}"),
-              ],
-            ))),
-      ],
+  Widget getImage(AsyncSnapshot snapshot) {
+    return Container(
+      margin: EdgeInsets.all(10),
+      child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Image.network(
+            "${snapshot.data!.image}",
+            fit: BoxFit.fill,
+          )),
     );
   }
 
   Widget getContainer(Widget child) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey[700],
+        color: Colors.grey[600],
         borderRadius: BorderRadius.all(Radius.circular(15)),
       ),
       padding: EdgeInsets.all(10),
@@ -119,18 +100,27 @@ class Information {
         Expanded(
             child: ListView(
           children: [
+            getTitle(snapshot, "Live status:"),
+            getSubTitle(snapshot, "${snapshot.data!.status}"),
+            SizedBox(height: 20),
+            getTitle(snapshot, "Species:"),
+            getSubTitle(snapshot, "${snapshot.data!.species}"),
+            SizedBox(height: 20),
+            getTitle(snapshot, "Gender:"),
+            getSubTitle(snapshot, "${snapshot.data!.gender}"),
+            SizedBox(height: 20),
             getTitle(snapshot, "Last known location:"),
             getSubTitle(
                 snapshot, "${InfoAboutCharacterForListview.lastLocation}"),
-            SizedBox(height: 25),
+            SizedBox(height: 20),
             getTitle(snapshot, "First seen in:"),
             getSubTitle(
                 snapshot, "${InfoAboutCharacterForListview.firstSeenIn}"),
-            SizedBox(height: 25),
+            SizedBox(height: 20),
             getTitle(snapshot, "Episodes featuring:"),
             getSubTitle(
                 snapshot, "${InfoAboutCharacterForListview.episodesFeat}"),
-            SizedBox(height: 25),
+            SizedBox(height: 20),
             getTitle(snapshot, "Created:"),
             getSubTitle(snapshot, "${InfoAboutCharacterForListview.created}"),
           ],
@@ -143,7 +133,7 @@ class Information {
     return Text(
       title,
       style: TextStyle(
-          color: Colors.grey[350], fontSize: 14, fontFamily: "GowunDodum"),
+          color: Colors.grey[300], fontSize: 14, fontFamily: "GowunDodum"),
     );
   }
 

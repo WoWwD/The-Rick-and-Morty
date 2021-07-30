@@ -41,27 +41,19 @@ class Menu extends StatelessWidget {
               ),
             ),
           ),
-          Column(
-            children: [
-              Expanded(
-                child: Container(),
-                flex: 5,
-              ),
-              Expanded(
-                child: Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      getButton("Characters", "pageCardsCharacters", context),
-                      getButton("Episodes", "pageEpisodes", context),
-                      getButton("Locations", "pageLocations", context),
-                    ],
-                  ),
-                ),
-              )
-            ],
-          )
+          Container(
+            alignment: Alignment.bottomCenter,
+            margin: EdgeInsets.only(bottom: 50),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                getButton("Characters", "pageCardsCharacters", context),
+                getButton("Episodes", "pageEpisodes", context),
+                getButton("Locations", "pageLocations", context),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -71,7 +63,7 @@ class Menu extends StatelessWidget {
 Widget getButton(String text, String route, BuildContext context) {
   return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        fixedSize: Size(110, 50),
+        fixedSize: Size(100, 50),
         shadowColor: Colors.grey[600],
         primary: Colors.grey[600],
         shape: RoundedRectangleBorder(
@@ -84,6 +76,6 @@ Widget getButton(String text, String route, BuildContext context) {
       child: Text(
         text,
         style: TextStyle(
-            color: Colors.grey[350], fontSize: 15, fontFamily: "GFowunDodum"),
+            color: Colors.grey[300], fontSize: 13, fontFamily: "GFowunDodum"),
       ));
 }

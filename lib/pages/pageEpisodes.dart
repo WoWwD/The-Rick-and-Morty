@@ -45,37 +45,37 @@ class _Episodes extends State<PageEpisodes> {
                       return ListView.builder(
                         itemCount: snapshot.data!.results.length,
                         itemBuilder: (context, index) {
-                          return Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey[600],
-                                borderRadius: BorderRadius.circular(15),
+                          return Card(
+                            color: Colors.grey[600],
+                            shadowColor: Colors.grey[300],
+                            elevation: 1,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15)),
+                            margin: EdgeInsets.all(10),
+                            child: ListTile(
+                              title: Text(
+                                "${snapshot.data!.results[index].name}",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontFamily: "GFowunDodum"),
                               ),
-                              margin: EdgeInsets.all(10),
-                              child: Center(
-                                child: ListTile(
-                                  title: Text(
-                                    "${snapshot.data!.results[index].name}",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontFamily: "GFowunDodum"),
-                                  ),
-                                  subtitle: Text(
-                                    "${snapshot.data!.results[index].airDate}",
-                                    style: TextStyle(
-                                        color: Colors.grey[350],
-                                        fontSize: 14,
-                                        fontFamily: "GFowunDodum"),
-                                  ),
-                                  trailing: Text(
-                                    "${snapshot.data!.results[index].episode}",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontFamily: "GFowunDodum"),
-                                  ),
-                                ),
-                              ));
+                              subtitle: Text(
+                                "${snapshot.data!.results[index].airDate}",
+                                style: TextStyle(
+                                    color: Colors.grey[300],
+                                    fontSize: 14,
+                                    fontFamily: "GFowunDodum"),
+                              ),
+                              trailing: Text(
+                                "${snapshot.data!.results[index].episode}",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontFamily: "GFowunDodum"),
+                              ),
+                            ),
+                          );
                         },
                       );
                     } else if (snapshot.hasError) {

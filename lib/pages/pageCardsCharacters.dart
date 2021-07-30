@@ -111,7 +111,7 @@ class BodyOfCard {
           Text(
             title,
             style: TextStyle(
-                color: Colors.grey[350],
+                color: Colors.grey[300],
                 fontSize: 14,
                 fontFamily: "GowunDodum"),
           ),
