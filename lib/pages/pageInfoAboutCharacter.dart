@@ -77,8 +77,7 @@ class Information {
                   ),
                   Expanded(
                       child: Container(
-                          margin:
-                              EdgeInsets.only(left: 15, top: 15, bottom: 15),
+                          margin: EdgeInsets.only(left: 15, top: 8, bottom: 8),
                           padding: EdgeInsets.all(10),
                           decoration: BoxDecoration(
                             color: Colors.grey[700],
