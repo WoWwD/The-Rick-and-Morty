@@ -1,7 +1,3 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import '../links.dart';
-
 class Episodes {
   late List<Results> results;
 
@@ -42,16 +38,5 @@ class Results {
     data['air_date'] = this.airDate;
     data['episode'] = this.episode;
     return data;
-  }
-}
-
-Future<Episodes> getEpisodesFromAPI() async {
-  var url = Uri.https(Links.authority, Links.unencodedPathEpisode);
-  var response = await http.get(url);
-
-  if (response.statusCode == 200) {
-    return Episodes.fromJson(json.decode(response.body));
-  } else {
-    throw Exception("Error response");
   }
 }

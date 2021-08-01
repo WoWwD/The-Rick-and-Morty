@@ -1,6 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:the_rick_and_morty/models/locations.dart';
+import 'package:http/http.dart' as http;
+import 'package:paging/paging.dart';
+import 'Widgets/widgets.dart';
 
 class PageLocations extends StatefulWidget {
   @override
@@ -8,10 +12,23 @@ class PageLocations extends StatefulWidget {
 }
 
 class _PageLocations extends State<PageLocations> {
+  static int pageNumber = 1;
+  Future<List<Results>> getLocationsFromAPI() async {
+    var response = await http.get(Uri.parse(
+        "https://rickandmortyapi.com/api/location/?page=$pageNumber"));
+    pageNumber++;
+    if (response.statusCode == 200) {
+      var character = Locations.fromJson(json.decode(response.body));
+      return character.results;
+    } else {
+      throw Exception("Error response");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    getLocationsFromAPI();
+    pageNumber = 1;
   }
 
   @override
@@ -24,68 +41,54 @@ class _PageLocations extends State<PageLocations> {
               style: TextStyle(
                   fontFamily: "get-schwifty",
                   color: Color.fromRGBO(13, 198, 203, 1),
-                  fontSize: 28),
+                  fontSize: 25),
             ),
-            backgroundColor: Colors.grey[800]),
+            backgroundColor: Color.fromRGBO(13, 24, 33, 1)),
         body: Stack(
           children: <Widget>[
             Container(
               decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/images/RaM.jpg"),
-                  fit: BoxFit.fill,
-                ),
+                color: Color.fromRGBO(13, 24, 33, 1),
               ),
             ),
-            Container(
-              child: FutureBuilder<Locations>(
-                  future: getLocationsFromAPI(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return ListView.builder(
-                        itemCount: snapshot.data!.results.length,
-                        itemBuilder: (context, index) {
-                          return Card(
-                              color: Colors.grey[600],
-                              shadowColor: Colors.grey[300],
-                              elevation: 1,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15)),
-                              margin: EdgeInsets.all(10),
-                              child: Center(
-                                child: ListTile(
-                                  title: Text(
-                                    "${snapshot.data!.results[index].name}",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontFamily: "GFowunDodum"),
-                                  ),
-                                  subtitle: Text(
-                                    "${snapshot.data!.results[index].type}",
-                                    style: TextStyle(
-                                        color: Colors.grey[300],
-                                        fontSize: 14,
-                                        fontFamily: "GFowunDodum"),
-                                  ),
-                                  trailing: Text(
-                                    "${snapshot.data!.results[index].dimension}",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontFamily: "GFowunDodum"),
-                                  ),
-                                ),
-                              ));
-                        },
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text("Error");
-                    }
-                    return Center(child: CircularProgressIndicator());
-                  }),
-            ),
+            Pagination<Results>(
+                pageBuilder: (currentSize) => getLocationsFromAPI(),
+                itemBuilder: (index, item) {
+                  return Cards().getCard(BodyOfCard().getInfo(item));
+                })
           ],
         ));
+  }
+}
+
+class BodyOfCard {
+  Widget getInfo(Results item) {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          flex: 2,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              TitleSubtitle().getTitle(item.name),
+              TitleSubtitle().getSubTitle(item.type),
+            ],
+          ),
+        ),
+        Expanded(
+            child: Container(
+          alignment: Alignment.centerRight,
+          child: Text(
+            "${item.dimension}",
+            textAlign: TextAlign.right,
+            style: TextStyle(
+                color: Colors.grey[400],
+                fontSize: 14,
+                fontFamily: "GowunDodum"),
+          ),
+        )),
+      ],
+    );
   }
 }

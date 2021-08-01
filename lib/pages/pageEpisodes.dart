@@ -1,6 +1,12 @@
+import 'dart:convert';
+import 'package:flutter/rendering.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:the_rick_and_morty/models/episodes.dart';
+import 'package:paging/paging.dart';
+
+import 'Widgets/widgets.dart';
 
 class PageEpisodes extends StatefulWidget {
   @override
@@ -8,10 +14,23 @@ class PageEpisodes extends StatefulWidget {
 }
 
 class _Episodes extends State<PageEpisodes> {
+  static int pageNumber = 1;
+  Future<List<Results>> getEpisodesFromAPI() async {
+    var response = await http.get(
+        Uri.parse("https://rickandmortyapi.com/api/episode/?page=$pageNumber"));
+    pageNumber++;
+    if (response.statusCode == 200) {
+      var episodes = Episodes.fromJson(json.decode(response.body));
+      return episodes.results;
+    } else {
+      throw Exception("Error response");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    getEpisodesFromAPI();
+    pageNumber = 1;
   }
 
   @override
@@ -24,67 +43,48 @@ class _Episodes extends State<PageEpisodes> {
               style: TextStyle(
                   fontFamily: "get-schwifty",
                   color: Color.fromRGBO(13, 198, 203, 1),
-                  fontSize: 28),
+                  fontSize: 25),
             ),
-            backgroundColor: Colors.grey[800]),
+            backgroundColor: Color.fromRGBO(13, 24, 33, 1)),
         body: Stack(
           children: <Widget>[
             Container(
               decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/images/RaM.jpg"),
-                  fit: BoxFit.fill,
-                ),
+                color: Color.fromRGBO(13, 24, 33, 1),
               ),
             ),
-            Container(
-              child: FutureBuilder<Episodes>(
-                  future: getEpisodesFromAPI(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return ListView.builder(
-                        itemCount: snapshot.data!.results.length,
-                        itemBuilder: (context, index) {
-                          return Card(
-                            color: Colors.grey[600],
-                            shadowColor: Colors.grey[300],
-                            elevation: 1,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15)),
-                            margin: EdgeInsets.all(10),
-                            child: ListTile(
-                              title: Text(
-                                "${snapshot.data!.results[index].name}",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontFamily: "GFowunDodum"),
-                              ),
-                              subtitle: Text(
-                                "${snapshot.data!.results[index].airDate}",
-                                style: TextStyle(
-                                    color: Colors.grey[300],
-                                    fontSize: 14,
-                                    fontFamily: "GFowunDodum"),
-                              ),
-                              trailing: Text(
-                                "${snapshot.data!.results[index].episode}",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontFamily: "GFowunDodum"),
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text("Error");
-                    }
-                    return Center(child: CircularProgressIndicator());
-                  }),
-            ),
+            Pagination<Results>(
+                pageBuilder: (currentSize) => getEpisodesFromAPI(),
+                itemBuilder: (index, item) {
+                  return Cards().getCard(BodyOfCard().getInfo(item));
+                })
           ],
         ));
+  }
+}
+
+class BodyOfCard {
+  Widget getInfo(Results item) {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          flex: 3,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              TitleSubtitle().getTitle(item.name),
+              TitleSubtitle().getSubTitle(item.airDate),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Container(
+            alignment: Alignment.centerRight,
+            child: TitleSubtitle().getSubTitle(item.episode),
+          ),
+        )
+      ],
+    );
   }
 }
